@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const sequelize = require('./config/db');
+const getSequelize = sequelize.getSequelize || (() => sequelize);
 const { seedDefaultUsers } = require('./utils/seed');
 
 require('./models/User');
@@ -53,7 +54,7 @@ app.get('/api/health', async (req, res) => {
   }
 
   try {
-    await sequelize.authenticate();
+    await getSequelize().authenticate();
     res.json({ ok: true, database: 'connected' });
   } catch (error) {
     res.status(503).json({
@@ -74,8 +75,8 @@ const initDatabase = () => {
         throw new Error(configErrors.join(', '));
       }
 
-      await sequelize.authenticate();
-      await sequelize.sync({ alter: !process.env.VERCEL });
+      await getSequelize().authenticate();
+      await getSequelize().sync({ alter: !process.env.VERCEL });
       await seedDefaultUsers();
     })().catch((error) => {
       dbInitPromise = null;

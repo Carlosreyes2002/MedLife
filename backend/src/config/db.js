@@ -1,6 +1,8 @@
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
+let sequelizeInstance = null;
+
 const isServerless = Boolean(process.env.VERCEL);
 
 const pool = {
@@ -15,9 +17,17 @@ const sslOptions = {
   rejectUnauthorized: false,
 };
 
-const buildSequelize = () => {
-  if (process.env.DATABASE_URL) {
-    return new Sequelize(process.env.DATABASE_URL, {
+const createSequelize = () => {
+  const databaseUrl = process.env.DATABASE_URL?.trim();
+
+  if (databaseUrl) {
+    if (!/^postgres(ql)?:\/\//i.test(databaseUrl)) {
+      throw new Error(
+        'DATABASE_URL inválida. Copia la connection string completa de Neon (postgresql://...)'
+      );
+    }
+
+    return new Sequelize(databaseUrl, {
       dialect: 'postgres',
       logging: false,
       pool,
@@ -25,21 +35,43 @@ const buildSequelize = () => {
     });
   }
 
-  return new Sequelize(
-    process.env.DB_NAME,
-    process.env.DB_USER,
-    process.env.DB_PASSWORD,
-    {
-      host: process.env.DB_HOST,
+  const { DB_NAME, DB_USER, DB_PASSWORD, DB_HOST } = process.env;
+
+  if (DB_NAME && DB_USER && DB_PASSWORD && DB_HOST) {
+    return new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
+      host: DB_HOST,
       port: process.env.DB_PORT || 5432,
       dialect: 'postgres',
       logging: false,
       pool,
       dialectOptions: isServerless ? { ssl: sslOptions } : {},
-    }
-  );
+    });
+  }
+
+  // Permite arrancar la app y responder /api/health aunque falte configuración.
+  return new Sequelize('postgres://localhost:5432/placeholder', {
+    dialect: 'postgres',
+    logging: false,
+    pool: { max: 1, min: 0 },
+  });
 };
 
-const sequelize = buildSequelize();
+const getSequelize = () => {
+  if (!sequelizeInstance) {
+    sequelizeInstance = createSequelize();
+  }
+  return sequelizeInstance;
+};
 
-module.exports = sequelize;
+module.exports = new Proxy(
+  {},
+  {
+    get(_target, prop) {
+      const sequelize = getSequelize();
+      const value = sequelize[prop];
+      return typeof value === 'function' ? value.bind(sequelize) : value;
+    },
+  }
+);
+
+module.exports.getSequelize = getSequelize;

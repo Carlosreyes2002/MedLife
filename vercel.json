@@ -7,6 +7,7 @@
     },
     "backend": {
       "root": "backend",
+      "entrypoint": "src/app.js",
       "routePrefix": "/_/backend",
       "framework": "express"
     }
