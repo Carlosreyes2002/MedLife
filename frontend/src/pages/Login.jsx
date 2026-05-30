@@ -197,6 +197,11 @@ export default function Login() {
         <button
           type="submit"
           className="btn btn--primary login-submit"
+          style={{
+            background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+            color: '#fff',
+            boxShadow: '0 4px 14px rgba(220, 38, 38, 0.35)',
+          }}
           disabled={isSubmitting || isLocked}
         >
           {isSubmitting && <span className="btn__spinner" aria-hidden="true" />}
