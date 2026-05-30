@@ -35,6 +35,10 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: 'Credenciales inválidas' });
     }
 
+    if (!process.env.JWT_SECRET) {
+      return res.status(503).json({ message: 'JWT_SECRET no configurado en el servidor' });
+    }
+
     const token = jwt.sign(
       { id: user.id, role: user.role },
       process.env.JWT_SECRET
