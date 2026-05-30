@@ -8,10 +8,10 @@
     },
     {
       "source": "/_/backend/:path*",
-      "destination": "/api/:path*"
+      "destination": "/api"
     },
     {
-      "source": "/(.*)",
+      "source": "/((?!_/backend|api).*)",
       "destination": "/index.html"
     }
   ],
