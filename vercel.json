@@ -4,12 +4,22 @@
       "root": "frontend",
       "routePrefix": "/",
       "framework": "vite"
-    },
-    "backend": {
-      "root": "backend",
-      "entrypoint": "src/app.js",
-      "routePrefix": "/_/backend",
-      "framework": "express"
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/_/backend",
+      "destination": "/api"
+    },
+    {
+      "source": "/_/backend/:path*",
+      "destination": "/api/:path*"
+    }
+  ],
+  "functions": {
+    "api/index.js": {
+      "maxDuration": 30
+    }
+  },
+  "installCommand": "npm install --prefix backend && npm install --prefix frontend"
 }

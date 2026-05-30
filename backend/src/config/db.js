@@ -1,5 +1,8 @@
 const { Sequelize } = require('sequelize');
-require('dotenv').config();
+
+if (!process.env.VERCEL) {
+  require('dotenv').config();
+}
 
 let sequelizeInstance = null;
 
