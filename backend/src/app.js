@@ -20,6 +20,22 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const dbReady = sequelize
+  .sync({ alter: process.env.NODE_ENV !== 'production' })
+  .catch((error) => {
+    console.error('Error al conectar la base de datos:', error);
+    throw error;
+  });
+
+app.use(async (req, res, next) => {
+  try {
+    await dbReady;
+    next();
+  } catch (error) {
+    res.status(503).json({ message: 'Base de datos no disponible' });
+  }
+});
+
 app.get('/', (req, res) => {
   res.json({ status: 'MedLife API running' });
 });
@@ -34,7 +50,7 @@ const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
   try {
-    await sequelize.sync({ alter: true });
+    await dbReady;
     app.listen(PORT, () => {
       console.log(`Servidor corriendo en puerto ${PORT}`);
     });
@@ -44,4 +60,8 @@ const startServer = async () => {
   }
 };
 
-startServer();
+module.exports = app;
+
+if (!process.env.VERCEL) {
+  startServer();
+}
