@@ -1,0 +1,30 @@
+# Carpetas de otros integrantes (Carlos sube todo excepto estas)
+backend/Jorge/
+frontend/Alejandro/
+frontend/Allan/
+frontend/Xavier/
+
+# Dependencias
+node_modules/
+**/node_modules/
+
+# Build
+dist/
+**/dist/
+dist-ssr/
+
+# Entorno y secretos
+.env
+**/.env
+*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Sistema y editores
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/
