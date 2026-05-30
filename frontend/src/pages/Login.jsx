@@ -155,7 +155,7 @@ export default function Login() {
         <form className="card login-card" onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="login-card__header">
             <LogoMark size={40} />
-            <h2>Bienvenido</h2>
+            <h2>Bienvenido Doctor</h2>
             <p className="subtitle">Inicia sesión en tu cuenta clínica</p>
           </div>
 
