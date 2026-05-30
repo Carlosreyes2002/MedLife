@@ -1,11 +1,6 @@
 {
-  "experimentalServices": {
-    "frontend": {
-      "root": "frontend",
-      "routePrefix": "/",
-      "framework": "vite"
-    }
-  },
+  "buildCommand": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
+  "outputDirectory": "frontend/dist",
   "rewrites": [
     {
       "source": "/_/backend",
@@ -14,12 +9,16 @@
     {
       "source": "/_/backend/:path*",
       "destination": "/api/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
   "functions": {
     "api/index.js": {
-      "maxDuration": 30
+      "maxDuration": 30,
+      "includeFiles": "backend/**"
     }
-  },
-  "installCommand": "npm install --prefix backend && npm install --prefix frontend"
+  }
 }
