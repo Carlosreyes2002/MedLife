@@ -1,9 +1,3 @@
-# Carpetas de otros integrantes (Carlos sube todo excepto estas)
-backend/Jorge/
-frontend/Alejandro/
-frontend/Allan/
-frontend/Xavier/
-
 # Dependencias
 node_modules/
 **/node_modules/
